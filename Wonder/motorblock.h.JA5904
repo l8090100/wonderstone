@@ -1,0 +1,98 @@
+#ifndef MOTORBLOCK_H
+#define MOTORBLOCK_H
+
+#include <QGroupBox>
+#include <QWidget>
+#include <QMouseEvent>
+
+QT_BEGIN_NAMESPACE
+class QPushButton;
+class QCheckBox;
+class QComboBox;
+class QGroupBox;
+class QLabel;
+class QSpinBox;
+class QStackedWidget;
+
+QT_END_NAMESPACE
+
+//! [0]
+class MotorBlock : public QGroupBox
+{
+    Q_OBJECT
+
+public:
+    MotorBlock(QWidget *parent = 0);
+
+//    void setMode(bool mode);
+    void setUsed(bool used);
+    void setName(QString name);
+    void setNowPosition(int val);
+    void setDestination(int val);
+    void setSpeed(int val);
+    void setAcceleration(int val);
+    void setDelay(int val);
+    void setContinue(int val);
+    void setSituation(QString situation);
+
+    bool getMode();
+    bool getUsed();
+    QString getName();
+    int getNowPosition();
+    int getDesTination();
+    int getSpeed();
+    int getAcceleratiob();
+    int getDelay();
+    int getContinue();
+    QString getSituation();
+
+    void setNumberToLabel(QLabel *label,int val);
+
+    void mousePressEvent(QMouseEvent *ev);
+    void ModeToggleButtonEvent(QMouseEvent *ev2);
+
+
+
+
+
+signals:
+   // void valueChanged(int value);
+    void MotorBlock_Mouse_Pressed();
+    void MotorBlock_Toggle_Button();
+
+public slots:
+   // void setValue(int value);
+    void setMode();
+
+
+private:
+    QPushButton *Tab_B;
+    QPushButton *Mode_B;
+    QPushButton *Used_B;
+    QPushButton *Manual_Minus_B;
+    QPushButton *Manual_Enable_B;
+    QPushButton *Manual_Plus_B;
+    QLabel  *Name_L;
+    QLabel  *NowPosition_L;
+    QLabel  *Destination_L;
+    QLabel  *Speed_L;
+    QLabel  *Acceleration_L;
+    QLabel  *Delay_L;
+    QLabel  *Continue_L;
+    QLabel  *Situation_L;
+
+    bool M_mode;
+    bool M_used;
+    QString M_name;
+    int M_nowPos;
+    int M_des;
+    int M_speed;
+    int M_acce;
+    int M_delay;
+    int M_conti;
+    QString M_situation;
+
+};
+//! [0]
+
+#endif

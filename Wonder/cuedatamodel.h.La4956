@@ -1,0 +1,34 @@
+#ifndef CUEDATAMODEL_H
+#define CUEDATAMODEL_H
+
+#include <QAbstractTableModel>
+#include <QVariant>
+#include <QMap>
+#include <cuedata.h>
+
+class CueDataModel:public QAbstractTableModel
+{
+public:
+    CueDataModel(QObject *parent=0);
+    ~CueDataModel();
+    void setCueList(const QList<CueData> &list);
+    CueDataModel(QList<CueData*> &cueList,QObject *parent=0);
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+
+    bool insertRows(int position, int rows, const QModelIndex &parent);
+    bool removeRows(int position, int rows, const QModelIndex &parent);
+    QList<CueData> CueList;
+
+protected:
+    QVariant data(const QModelIndex &index,int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &index)const;
+    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
+private:
+    QString cueListAt(int offset) const;
+
+};
+
+
+#endif // CUEDATAMODEL_H

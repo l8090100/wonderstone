@@ -1,0 +1,81 @@
+#ifndef SHOWPAGE_H
+#define SHOWPAGE_H
+
+
+#include <QWidget>
+#include <QStackedWidget>
+#include <QListWidget>
+#include <QStackedWidget>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QtSerialPort/QSerialPort>
+#include <QtWidgets>
+#include <QItemDelegate>
+#include <QSpinBox>
+#include "database.h"
+#include "motorblock.h"
+#include "cuedata.h"
+#include "cuedatamodel.h"
+#include "currencymodel.h"
+#include "customtablemodel.h"
+
+
+namespace Ui {
+class ShowPage;
+class MotorBlock;
+}
+
+class ShowPage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit ShowPage(QWidget *parent = 0);
+    ~ShowPage();
+public:
+    static QString selectIndexName;
+    static QString MotorIndexName[10];
+    MotorBlock *mb[8];
+    CustomTableModel *m_model;
+    int cueTableSelectRow;
+//    QList<CueData*> CueList;
+    void showMotorData();
+
+    int getMotorBlockIndex();
+    
+
+private slots:
+    void on_Show_SetDes_Slider_valueChanged(int value);
+    void on_Show_SetDes_spinBox_valueChanged(int arg1);
+    void on_Show_SpeedInput_Slider_valueChanged(int value);
+    void on_Show_SpeedInput_spinBox_valueChanged(int arg1);
+    void on_Show_AcceInput_Slider_valueChanged(int value);
+    void on_Show_AcceInput_spinBox_valueChanged(int arg1);
+    void on_Show_DelayInput_spinBox_valueChanged(int arg1);
+    void ShowPage_Mouse_Pressed();
+    void on_Show_ContiInput_spinBox_valueChanged(int arg1);
+    void on_Show_SetMinPos_spinBox_valueChanged(int arg1);
+    void on_Show_SetMaxPos_spinBox_valueChanged(int arg1);
+    void on_Show_ManualSpeed_slider_valueChanged(int value);
+    void on_Show_ManualSpeed_spinBox_valueChanged(int arg1);
+    void on_Show_HomeSpeed_slider_valueChanged(int value);
+    void on_Show_HomeSpeed_spinBox_valueChanged(int arg1);
+    void on_Show_AddCue_button_clicked();
+    void on_Show_DeleteCue_button_clicked();
+    void on_Show_SelectPreviousCue_button_clicked();
+    void on_Show_SelectNextCue_button_clicked();
+    void on_Show_EditMode_Togglebutton_clicked(bool checked);
+    void onTableClicked(const QModelIndex &index);
+
+
+private:
+    Ui::ShowPage *ui;
+
+    QSqlTableModel *cueList_Model;
+    void UpdateData(const QModelIndex &indexA, const QModelIndex &indexB);
+
+
+};
+
+
+#endif // SHOWPAGE_H
+

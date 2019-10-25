@@ -1,0 +1,27 @@
+#ifndef CUEDATA_H
+#define CUEDATA_H
+#include "QString"
+
+
+class cuedata
+{
+    QString cueName;
+    bool cueUsed = true;
+    int cueDestination = 10000;
+    int cueSpeed = 100;
+    int cueAcceleration = 50;
+    int cueDelay = 0;
+    int cueContinue = 0;
+    QList<QString> cueList;
+public:
+    void set_cueName(QString name)
+    {
+        cueName = name;
+    }
+    QString get_cueName()
+    {
+        return cueName;
+    }
+};
+
+#endif // CUEDATA_H
