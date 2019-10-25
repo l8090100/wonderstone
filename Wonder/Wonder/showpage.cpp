@@ -3,13 +3,6 @@
 #include "motorblock.h"
 #include <QObject>
 #include <QDebug>
-#include <QtNetwork>
-
-#include <osc/composer/OscMessageComposer.h>
-#include <osc/reader/OscMessage.h>
-#include <osc/reader/types/OscValue.h>
-#include <osc/exceptions/OSC_ALL_EXCEPTIONS.h>
-#include <osc/reader/OscReader.h>
 
 int ShowPage::cueTableSelectRow = 0;
 int ShowPage::delay_temp = 0;
@@ -17,8 +10,6 @@ bool ShowPage::final_cue_flag = false;
 int ShowPage::interval_data[8] = {0,0,0,0,0,0,0,0};
 int ShowPage::total_finished_motor = 0;
 bool ShowPage::flag_all_motor_finished = false;
-int ShowPage::cue_delay_Temp = 0;
-int ShowPage::motor_delay_Temp[8] = {0,0,0,0,0,0,0,0};
 
 bool ShowPage::cue_flag = false;
 bool ShowPage::cue_delay_flag = false;
@@ -27,7 +18,6 @@ bool ShowPage::motor_flag[8] = {false,false,false,false,false,false,false,false}
 bool ShowPage::motor_delay_flag[8]= {false,false,false,false,false,false,false,false};
 bool ShowPage::motor_request_flag[8]= {false,false,false,false,false,false,false,false};
 bool ShowPage::flag_arrived[8]= {false,false,false,false,false,false,false,false};
-bool ShowPage::destination_send[8]= {false,false,false,false,false,false,false,false};
 
 CustomTableModel *ShowPage::m_model = new CustomTableModel();
 QList<MotorBlock*> *ShowPage::mb = new QList<MotorBlock*>;
@@ -59,7 +49,6 @@ ShowPage::ShowPage(QWidget *parent): QWidget(parent),  ui(new Ui::ShowPage)
        ui->Show_CueListTable_tableView->horizontalHeader()->setStretchLastSection(true);
        ui->Show_CueListTable_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-       connect(ui->Show_CueListTable_tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotContextMenu(QPoint)));
 
 //    for(int c=0;c<10;c++){
 ////        CueData *cue = new CueData(ui->Show_CueListTable_tableView);
@@ -108,22 +97,10 @@ ShowPage::ShowPage(QWidget *parent): QWidget(parent),  ui(new Ui::ShowPage)
     cue_thread = new RunCueThread(this);
 //    connect(m_thread,&ThreadFromQThread::progress,this,&ShowPage::progress);
 //    connect(cue_thread,&RunCueThread::progress,this,&ShowPage::cue_progress);
-    connect(&show_heart,&QTimer::timeout,this,&ShowPage::step_progress);
-    connect(&read_serial_timer,&QTimer::timeout,this,&ShowPage::read_serial_progress);
+    connect(&show_heart,&QTimer::timeout,this,&ShowPage::progress);
     show_heart.setInterval(1000);
-    read_serial_timer.setInterval(533);
 
     set_ui_default();
-    read_serial_timer.start();
-
-    groupAddress = QHostAddress("127.0.0.1");
-    udpSocket = new QUdpSocket(this);
-    udpSocket->bind(QHostAddress::AnyIPv4, 9001, QUdpSocket::ReuseAddressHint|QUdpSocket::ShareAddress);
-    udpSocket->joinMulticastGroup(groupAddress);
-    connect(udpSocket, SIGNAL(readyRead()),
-            this, SLOT(processPendingDatagrams()));
-    OscReader* mReader;
-    OscMessage* mMessage;
 
 };
 
@@ -288,27 +265,27 @@ void ShowPage::set_HomeSpeed_spinBox(int value){ui->Show_HomeSpeed_spinBox->setV
 
 void ShowPage::set_ui_default()
 {
-    ui->Show_SetDes_Slider->setRange(-10000, 10000);
-    ui->Show_SpeedInput_Slider->setRange(1,5000);
-    ui->Show_AcceInput_Slider->setRange(1,1000);
-    ui->Show_ManualSpeed_slider->setRange(1,5000);
-    ui->Show_HomeSpeed_slider->setRange(1,5000);
+    ui->Show_SetDes_Slider->setRange(0, 150000);
+    ui->Show_SpeedInput_Slider->setRange(0,3000);
+    ui->Show_AcceInput_Slider->setRange(0,100);
+    ui->Show_ManualSpeed_slider->setRange(0,2000);
+    ui->Show_HomeSpeed_slider->setRange(0,3000);
 
-    ui->Show_SetDes_spinBox->setRange(-10000, 10000);
-    ui->Show_SpeedInput_spinBox->setRange(1,5000);
-    ui->Show_AcceInput_spinBox->setRange(1,1000);
-    ui->Show_ManualSpeed_spinBox->setRange(1,5000);
-    ui->Show_HomeSpeed_spinBox->setRange(1,5000);
+    ui->Show_SetDes_spinBox->setRange(0, 150000);
+    ui->Show_SpeedInput_spinBox->setRange(0,3000);
+    ui->Show_AcceInput_spinBox->setRange(0,100);
+    ui->Show_ManualSpeed_spinBox->setRange(0,2000);
+    ui->Show_HomeSpeed_spinBox->setRange(0,3000);
     ui->Show_SetMaxPos_spinBox->setRange(1,200000);
-    ui->Show_SetMinPos_spinBox->setRange(1,3000);
+    ui->Show_SetMinPos_spinBox->setRange(0,3000);
 
     ui->Show_SetDes_spinBox->setValue(10000);
     ui->Show_SpeedInput_spinBox->setValue(1500);
     ui->Show_AcceInput_spinBox->setValue(20);
-    ui->Show_ManualSpeed_spinBox->setValue(500);
-    ui->Show_HomeSpeed_spinBox->setValue(100);
-    ui->Show_SetMaxPos_spinBox->setValue(9000);
-    ui->Show_SetMinPos_spinBox->setValue(-9000);
+    ui->Show_ManualSpeed_spinBox->setValue(1500);
+    ui->Show_HomeSpeed_spinBox->setValue(2000);
+    ui->Show_SetMaxPos_spinBox->setValue(300000);
+    ui->Show_SetMinPos_spinBox->setValue(0);
 
 
     ui->Show_SetDes_Slider->setPageStep(100);
@@ -325,11 +302,6 @@ void ShowPage::set_ui_default()
     ui->Show_HomeSpeed_spinBox->setKeyboardTracking(false);
     ui->Show_SetMaxPos_spinBox->setKeyboardTracking(false);
     ui->Show_SetMinPos_spinBox->setKeyboardTracking(false);
-
-    popMenu = new QMenu( ui->Show_CueListTable_tableView);
-    addToBoard_Action = new QAction ( this);
-    addToBoard_Action ->setText ( QStringLiteral( "Add To Board" ));
-    popMenu->addAction(addToBoard_Action);
 
 }
 
@@ -500,145 +472,151 @@ void ShowPage::showMotorData2(const QModelIndex & index)
     qDebug() << "show2:"<<ui->Show_CueListTable_tableView->selectionModel()->currentIndex().row();
 }
 
-void ShowPage::read_serial_progress()
+void ShowPage::progress()
 {
-    if(connect_serial_flag == true){
-//        if(read_serial_counter%3==1){
-//            QString read_st = "N1=31\n";
-//            emit write_all_motors(read_st.toLocal8Bit());
-//        }
-////        if(read_serial_counter%4==2){
-////            QString read_pe = "N1=32\n";
-////            emit write_all_motors(read_pe.toLocal8Bit(),4);
-////        }
-//        if(read_serial_counter%3==2){
-//            QString read_pc = "N1=33\n";
-//            emit write_all_motors(read_pc.toLocal8Bit());
-//            read_serial_counter = 0;
-//        }
-//        if(read_serial_counter==100){
-//            read_serial_counter = 0;
-//        }
-//        read_serial_counter++;
-    }
 
-}
-
-void ShowPage::step_progress()
-{
 
     int delay = get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt();
 
-    //判斷cue使不使用
     if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),5)).toBool()==true){
         cue_flag = true;
-        //判斷cue delay
-        if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt()>0){
-            cue_delay_flag = false;
-            delay_temp++;
-            show_heart.setInterval(1000);
-            get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),(delay-1));
-              // get_m_model()->index(c,1),cueList_Model->index(c,1).data().toString()
-            qDebug() << "cue dalay:" <<get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt();
-        }else if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt()==0){
-             cue_delay_flag = true;
-                    show_heart.setInterval(1000);
-                    //判斷馬達使用
-                    for(int m=0;m<mb->size();m++){
-                        if(mb->at(m)->getUsed()==true){
-                            motor_flag[m] = true;
-                            //判斷馬達delay
-                            if(mb->at(m)->getDelay()>0){
-                                motor_delay_flag[m] = false;
-                                mb->at(m)->setDelay(mb->at(m)->getDelay()-1);
-                            }else if(mb->at(m)->getDelay()==0){
-                                motor_delay_flag[m] = true;
-                                //判斷馬達到位
-                                if(mb->at(m)->getNowPosition()<mb->at(m)->getDesTination()){
-                                    flag_all_motor_finished = false;
-                                }
-                                else if(mb->at(m)->getNowPosition()==mb->at(m)->getDesTination()){
-                                    flag_all_motor_finished = false;
-                                    if( flag_arrived[m]==false){
-                                     total_finished_motor = total_finished_motor+1;
-                                     motor_delay_flag[m] = false;
-                                     flag_arrived[m] = true;
-                                      qDebug() << "total_finished_motor==:"<< total_finished_motor;
-                                    }
-                                }
-                                else if(mb->at(m)->getNowPosition()>mb->at(m)->getDesTination()){
-                                    flag_all_motor_finished = false;
-                                }
-                                //判斷總共有幾個馬達到位，全部到位的話設定歸零
-                                   if(total_finished_motor == mb->size()){
-                                      flag_all_motor_finished = true;
-                                      total_finished_motor = 0;
-                                      for(int m=0;m<mb->size();m++){
-                                        flag_arrived[m] = false;
-                                      }
-                                      show_heart.stop();
-
-                                      get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),delay_temp);
-                                      delay_temp = 0;
-                                      //判斷是否為最後一個cue
-                                      if(get_cueTableSelectRow()==cueList_Model->rowCount()-1){
-                                          final_cue_flag = true;
-                                          show_heart.stop();
-                                          qDebug() << "final:" <<get_cueTableSelectRow();
-                                      }else{
-                                          final_cue_flag = false;
-                                          if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),4)).toInt()==1){
-                                              QModelIndex index = cueList_Model->index(get_cueTableSelectRow()+1,1);
-                                              onTableClicked(index);
-                                              ui->Show_CueListTable_tableView->selectRow(index.row());
-                                              cue_progress(get_cueTableSelectRow());//send packet
-                                              qDebug() << "count:" <<get_cueTableSelectRow();
-                                          }else{}
-                                      }
-
-                                   }else if(total_finished_motor<mb->size()){}
-                            }
-                        }else if(mb->at(m)->getUsed()==false){
-                             motor_flag[m] = false;
-                             if( flag_arrived[m]==false){
-                              total_finished_motor = total_finished_motor+1;
-                              flag_arrived[m] = true;
-                              motor_delay_flag[m] = false;
-                              qDebug() << "total_finished_motor else:"<< total_finished_motor;
-                             }
-
-                             if(total_finished_motor == mb->size()){
-                                show_heart.setInterval(100);
-                                flag_all_motor_finished = true;
-                                total_finished_motor = 0;
-                                for(int m=0;m<mb->size();m++){
-                                  flag_arrived[m] = false;
-                                }
-                                show_heart.stop();
-
-                                get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),delay_temp);
-                                delay_temp = 0;
-
-                                if(get_cueTableSelectRow()==cueList_Model->rowCount()-1){
-                                    final_cue_flag = true;
-                                    show_heart.stop();
-                                    qDebug() << "final:" <<get_cueTableSelectRow();
+//        if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),4)).toInt()==1){
+//            cue_conti_flag = true;
+            if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt()>0){
+                cue_delay_flag = false;
+                delay_temp++;
+                show_heart.setInterval(1000);
+                get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),(delay-1));
+                  // get_m_model()->index(c,1),cueList_Model->index(c,1).data().toString()
+                qDebug() << "cue dalay:" <<get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt();
+            }else{
+                 cue_delay_flag = true;
+                        show_heart.setInterval(1000);
+                        for(int m=0;m<mb->size();m++){
+                            if(mb->at(m)->getUsed()==true){
+                                motor_flag[m] = true;
+                                if(mb->at(m)->getDelay()>0){
+                                    motor_delay_flag[m] = false;
+                                    mb->at(m)->setDelay(mb->at(m)->getDelay()-1);
                                 }else{
-                                    final_cue_flag = false;
-                                    if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),4)).toInt()==1){
-                                        QModelIndex index = cueList_Model->index(get_cueTableSelectRow()+1,1);
-                                        onTableClicked(index);
-                                        ui->Show_CueListTable_tableView->selectRow(index.row());
-                                        cue_progress(get_cueTableSelectRow());
-                                        qDebug() << "count:" <<get_cueTableSelectRow();
-                                    }else{}
-                                }
-                             }
-                        }
-                    }
-        }
+                                    motor_delay_flag[m] = true;
+                                    if(mb->at(m)->getNowPosition()<mb->at(m)->getDesTination()){
+                                        flag_all_motor_finished = false;
+                                        mb->at(m)->setNowPosition(mb->at(m)->getNowPosition()+interval_data[m]);
+                                    }
+                                    if(mb->at(m)->getNowPosition()==mb->at(m)->getDesTination()){
+                                        flag_all_motor_finished = false;
+                                        if( flag_arrived[m]==false){
+                                         total_finished_motor = total_finished_motor+1;
+                                         motor_delay_flag[m] = false;
+                                         flag_arrived[m] = true;
+                                          qDebug() << "total_finished_motor==:"<< total_finished_motor;
+                                        }
+                                    }
+                                    if(mb->at(m)->getNowPosition()>mb->at(m)->getDesTination()){
+                                        flag_all_motor_finished = false;
+                                        mb->at(m)->setNowPosition(mb->at(m)->getNowPosition()-interval_data[m]);
+                                    }
+//                                    else{
+            //                            if(m<4){
+            //                                QString id = QString::number(m+1);
+            //                                QString speed =  QString::number(mb->at(m)->getSpeed());
+            //                                QString acce =  QString::number(mb->at(m)->getAcceleratiob());
+            //                                QString des = QString::number(mb->at(m)->getDesTination());
+            ////                                QString speed_data = "t"+id+"pn10"+"="+speed+"\n";
+            ////                                     emit write_all_motors(speed_data.toLocal8Bit(),4);
+            ////                                 qDebug() << speed_data;
+            ////                                QString acce_data = "t"+id+"pn11"+"="+acce+"\n";
+            ////                                     emit write_all_motors(acce_data.toLocal8Bit(),4);
+            ////                                qDebug() << acce_data;
+            //                                QString des_data = "t"+id+"ma"+des+"\n";
+            //                                     emit write_all_motors(des_data.toLocal8Bit(),4);
+            //                                qDebug() << des_data;
+            //                            }
 
-    }else if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),5)).toBool()==false){
+//                                       total_finished_motor = total_finished_motor+1;
+
+                                       if(total_finished_motor == mb->size()){
+                                          flag_all_motor_finished = true;
+                                          total_finished_motor = 0;
+                                          for(int m=0;m<mb->size();m++){
+                                            flag_arrived[m] = false;
+                                          }
+                                          show_heart.stop();
+
+                                          get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),delay_temp);
+                                          delay_temp = 0;
+
+                                          if(get_cueTableSelectRow()==cueList_Model->rowCount()-1){
+                                              final_cue_flag = true;
+                                              show_heart.stop();
+                                              qDebug() << "final:" <<get_cueTableSelectRow();
+                                          }else{
+                                                  final_cue_flag = false;
+                                                  if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),4)).toInt()==1){
+                                                      QModelIndex index = cueList_Model->index(get_cueTableSelectRow()+1,1);
+                                                      onTableClicked(index);
+                                                      ui->Show_CueListTable_tableView->selectRow(index.row());
+                                                      cue_progress(get_cueTableSelectRow());
+                                                      qDebug() << "count:" <<get_cueTableSelectRow();
+                                                  }else{
+
+                                                  }
+
+                                          }
+
+                                       }
+//                                    }
+
+                                }
+                            }else{
+                                 motor_flag[m] = false;
+                                 if( flag_arrived[m]==false){
+                                  total_finished_motor = total_finished_motor+1;
+                                  flag_arrived[m] = true;
+                                  motor_delay_flag[m] = false;
+                                  qDebug() << "total_finished_motor else:"<< total_finished_motor;
+                                 }
+
+                                 if(total_finished_motor == mb->size()){
+                                    show_heart.setInterval(100);
+                                    flag_all_motor_finished = true;
+                                    total_finished_motor = 0;
+                                    for(int m=0;m<mb->size();m++){
+                                      flag_arrived[m] = false;
+                                    }
+                                    show_heart.stop();
+
+                                    get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),delay_temp);
+                                    delay_temp = 0;
+
+                                    if(get_cueTableSelectRow()==cueList_Model->rowCount()-1){
+                                        final_cue_flag = true;
+                                        show_heart.stop();
+                                        qDebug() << "final:" <<get_cueTableSelectRow();
+                                    }else{
+                                            final_cue_flag = false;
+                                            if(get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),4)).toInt()==1){
+                                                QModelIndex index = cueList_Model->index(get_cueTableSelectRow()+1,1);
+                                                onTableClicked(index);
+                                                ui->Show_CueListTable_tableView->selectRow(index.row());
+                                                cue_progress(get_cueTableSelectRow());
+                                                qDebug() << "count:" <<get_cueTableSelectRow();
+                                            }else{
+
+                                            }
+
+                                    }
+
+                                 }
+                            }
+                        }
+            }
+//        }else{
+//            cue_conti_flag = false;
+//            show_heart.stop();
+//        }
+    }else{
         cue_flag = false;
         show_heart.setInterval(100);
         QModelIndex index = cueList_Model->index(get_cueTableSelectRow()+1,1);
@@ -647,44 +625,43 @@ void ShowPage::step_progress()
         cue_progress(get_cueTableSelectRow());
         qDebug() << "count:" <<get_cueTableSelectRow();
         //先到最後一 個cue停止，邏輯還要再改
-        if(get_cueTableSelectRow()==cueList_Model->rowCount()-1){
-            show_heart.stop();
-        }
+//        if(get_cueTableSelectRow()==cueList_Model->rowCount()-1){
+//            show_heart.stop();
+//        }
     }
 
 
     if(cue_flag==true){
-        if(cue_delay_flag==true){
-            for(int m=0;m<4;m++){
-                if(motor_flag[m]==true){
-                    if(motor_delay_flag[m]==true){
-                        if(destination_send[m]==false){
-                        //send quest
-                                QString id = QString::number(m+1);
-                                QString speed =  QString::number(mb->at(m)->getSpeed());
-                                QString acce =  QString::number(mb->at(m)->getAcceleratiob());
-                                QString des = QString::number(mb->at(m)->getDesTination()*10000);
-                                QString speed_data = "t"+id+"pn10"+"="+speed+"\n";
-                                     emit write_all_motors(speed_data.toLocal8Bit());
-                                 qDebug() << speed_data;
-                                QString acce_data = "t"+id+"pn11"+"="+acce+"\n";
-                                     emit write_all_motors(acce_data.toLocal8Bit());
-                                qDebug() << acce_data;
-                                QString des_data = "t"+id+"ma"+des+"\n";
-                                         emit write_all_motors(des_data.toLocal8Bit());
-                                qDebug() << des_data;
-                                destination_send[m]=true;
-                         }
+            if(cue_delay_flag==true){
+                for(int m=0;m<4;m++){
+                    if(motor_flag[m]==true){
+                        if(motor_delay_flag[m]==true){
+                            //send quest
+                                    QString id = QString::number(m+1);
+                                    QString speed =  QString::number(mb->at(m)->getSpeed());
+                                    QString acce =  QString::number(mb->at(m)->getAcceleratiob());
+                                    QString des = QString::number(mb->at(m)->getDesTination());
+                                    QString speed_data = "t"+id+"pn10"+"="+speed+"\n";
+//                                         emit write_all_motors(speed_data.toLocal8Bit(),4);
+//                            //         qDebug() << speed_data;
+//                                    QString acce_data = "t"+id+"pn11"+"="+acce+"\n";
+//                                         emit write_all_motors(acce_data.toLocal8Bit(),4);
+                                //    qDebug() << acce_data;
+                                    QString des_data = "t"+id+"ma"+des+"0\n";
+                                         emit write_all_motors(des_data.toLocal8Bit(),4);
+                             //       qDebug() << des_data;
+                                    motor_delay_flag[m]=false;
+                        }else{
+                            //motor delay
+                        }
                     }else{
-                        //motor delay
+                        //motor mute
                     }
-                }else{
-                    //motor mute
                 }
+            }else{
+                //cue delay
             }
-        }else{
-            //cue delay
-        }
+
     }else{
         //cue mute and select next row
     }
@@ -694,23 +671,26 @@ void ShowPage::step_progress()
 void ShowPage::cue_progress(int val)
 {
     qDebug() << "new:"<< val;
-    connect_serial_flag = false;
-    for(int m=0;m<4;m++){
-        destination_send[m] = false;
-        if(m<4){
-            QString id = QString::number(m+1);
-            QString speed =  QString::number(mb->at(m)->getSpeed());
-            QString acce =  QString::number(mb->at(m)->getAcceleratiob());
-            QString des = QString::number(mb->at(m)->getDesTination()*10000);
-            QString speed_data = "t"+id+"pn10"+"="+speed+"\n";
-                 emit write_all_motors(speed_data.toLocal8Bit());
-             qDebug() << speed_data;
-            QString acce_data = "t"+id+"pn11"+"="+acce+"\n";
-                 emit write_all_motors(acce_data.toLocal8Bit());
-            qDebug() << acce_data;
+
+    for(int m=0;m<8;m++){
+        mb->at(m)->setNowPosition(0);
+        if(mb->at(m)->getNowPosition()<mb->at(m)->getDesTination()){
+            interval_data[m] = abs((mb->at(m)->getDesTination() - mb->at(m)->getNowPosition()))/10;
+            if(m<4){
+                QString id = QString::number(m+1);
+                QString speed =  QString::number(mb->at(m)->getSpeed());
+                QString acce =  QString::number(mb->at(m)->getAcceleratiob());
+                QString des = QString::number(mb->at(m)->getDesTination());
+                QString speed_data = "t"+id+"pn10"+"="+speed+"\n";
+                     emit write_all_motors(speed_data.toLocal8Bit(),4);
+                 qDebug() << speed_data;
+                QString acce_data = "t"+id+"pn11"+"="+acce+"\n";
+                     emit write_all_motors(acce_data.toLocal8Bit(),4);
+                qDebug() << acce_data;
+            }
+        }else{
         }
     }
-    connect_serial_flag = true;
     show_heart.start();
 
 }
@@ -731,7 +711,7 @@ void ShowPage::showMotorData()
     for(int i=0;i<8;i++){
         bool used = get_m_model()->CueList.at(row)->MCue[i]->get_used();
         mb->at(i)->setUsed(used);
-        int now = mb->at(i)->getNowPosition();
+        int now = get_m_model()->CueList.at(row)->MCue[i]->get_nowPos();
         mb->at(i)->setNowPosition(now);
         int des = get_m_model()->CueList.at(row)->MCue[i]->get_des();
         mb->at(i)->setDestination(des);
@@ -752,24 +732,19 @@ void ShowPage::showMotorData()
 void ShowPage::on_Show_Go_Button_clicked()
 {
 
-    for(int m=0;m<4;m++){
-        destination_send[m] = false;
-        if(m<4){
-            QString id = QString::number(m+1);
-            QString speed =  QString::number(mb->at(m)->getSpeed());
-            QString acce =  QString::number(mb->at(m)->getAcceleratiob());
-            QString des = QString::number(mb->at(m)->getDesTination()*10000);
-            QString speed_data = "t"+id+"pn10"+"="+speed+"\n";
-                 emit write_all_motors(speed_data.toLocal8Bit());
-            QString acce_data = "t"+id+"pn11"+"="+acce+"\n";
-                 emit write_all_motors(acce_data.toLocal8Bit());
+    for(int m=0;m<8;m++){
+        mb->at(m)->setNowPosition(0);
+        if(mb->at(m)->getNowPosition()<mb->at(m)->getDesTination()){
+            interval_data[m] = (mb->at(m)->getDesTination() - mb->at(m)->getNowPosition())/10;
+        }else{
         }
     }
 
-    for(int m=0;m<8;m++){
-        motor_delay_Temp[m] = mb->at(m)->getDelay();
-    }
-    cue_delay_Temp = get_m_model()->data(get_m_model()->index(get_cueTableSelectRow(),2)).toInt();
+//    if(m_thread->isRunning())
+//    {
+//        return;
+//    }
+//    m_thread->start();
     show_heart.setInterval(100);
     show_heart.start();
 }
@@ -794,13 +769,11 @@ void ShowPage::on_Show_SetMinPos_button_clicked()
 
 void ShowPage::on_Show_AllMin_Button_clicked()
 {
-    for(int i=0;i<4;i++){
-        QString t = QString("%1%2%3").arg("t").arg(i+1).arg("jgf\n");
-        emit write_all_motors(t.toLocal8Bit());
-    }
+    QString t = "t1jgf\nt2jgf\nt3jgf\nt4jgf\n";
+    emit write_all_motors_max(t.toLocal8Bit(),4);
+//    qDebug() << "on_Show_AllMin_Button_clicked ";
 }
 
-//暫時先拿來設定全部馬達參數
 void ShowPage::on_Show_AdvancedSetting_Button_clicked()
 {
     for(int m=0;m<mb->size();m++){
@@ -816,51 +789,5 @@ void ShowPage::on_Show_AdvancedSetting_Button_clicked()
 
 void ShowPage::on_Show_Stop_Button_clicked()
 {
-    get_m_model()->setData(get_m_model()->index(get_cueTableSelectRow(),2),cue_delay_Temp);
-    for(int m=0;m<8;m++){
-        destination_send[m] = false;
-        mb->at(m)->setDelay(motor_delay_Temp[m]);
-    }
-    for(int i=0;i<4;i++){
-        QString t = QString("%1%2%3").arg("t").arg(i+1).arg("stop\n");
-        emit write_all_motors(t.toLocal8Bit());
-    }
     show_heart.stop();
-}
-
-void ShowPage::slotContextMenu(QPoint pos){
-    QModelIndex index =   ui->Show_CueListTable_tableView->indexAt(pos);
-    if (index.isValid())
-    {
-    popMenu->exec(QCursor::pos()); // 菜单出现的位置为当前鼠标的位置
-    qDebug()<< get_m_model()->CueList.at(index.row())->get_cueName();
-    emit generateCueBlock(get_m_model()->CueList.at(index.row())->get_cueName());
-    }
-}
-
-
-void ShowPage::on_Show_Connect_Button_clicked()
-{
-    connect_serial_flag = true;
-}
-
-void ShowPage::on_Show_Disconnect_Button_clicked()
-{
-    connect_serial_flag = false;
-}
-
-void ShowPage::processPendingDatagrams()
-{
-    while (udpSocket->hasPendingDatagrams()) {
-        QByteArray datagram ;
-        datagram.resize(udpSocket->pendingDatagramSize());
-        udpSocket->readDatagram(datagram.data(), datagram.size());
-        QByteArray* data = new QByteArray();
-        data = &datagram;
-        OscReader reader(data);
-        OscMessage* msg = reader.getMessage();
-        QString address = msg->getAddress();	// Get the message address
-        qDebug()<<address;
-        qDebug()<<msg->getValue(0)->toFloat();
-    }
 }

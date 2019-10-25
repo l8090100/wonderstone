@@ -2,7 +2,6 @@
 #define BOARDPAGE_H
 
 #include <QWidget>
-#include "boardblock.h"
 
 
 namespace Ui {
@@ -17,11 +16,6 @@ public:
     ~BoardPage();
 public:
     Ui::BoardPage *ui;
-    static int cueBlockCount;
-
-    static QList<BlockCue*> *cue_block;
-public slots:
-    void generateCueBlock(QString cueName);
 
 
 };

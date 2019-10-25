@@ -44,12 +44,11 @@ public:
     static ShowPage *showPage;
     static BoardPage *boardPage;
     static DataPage *dataPage;
-    static MotorBlock *motorBlock;
 
 
 
 public slots:
-    void show_motor_situation(QByteArray data);
+    void show_motor_situation(const QString& data,int motor);
 
 private slots:
 //    void openSerialPort();
@@ -67,6 +66,8 @@ private slots:
 //    void on_System_CloseSerial_button_clicked();
 //    void on_System_SettingDialog_button_clicked();
 //    void on_System_ClearConsole_button_clicked();
+    void on_Show_AllMin_Button_clicked();
+    void on_Show_AllHome_Button_clicked();
     void on_actionOpen_Project_triggered();
 //    void onQThreadFinished();
     void progress(int val);
@@ -89,7 +90,7 @@ private:
     static QSerialPort *m_serial;
     static bool motor_Read_Temp[8];
     static int motor_counter;
-    static QString temp_Data[8];
+
 
     ThreadFromQThread* m_thread;
     QThread* m_currentRunLoaclThread;

@@ -4,10 +4,9 @@
 #
 #-------------------------------------------------
 
-QT += core gui
-QT += sql
+QT       += core gui
+QT       += sql
 QT += widgets serialport
-QT += network
 
 #greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -52,9 +51,8 @@ SOURCES += main.cpp\
     motorcuemodel.cpp \
     threadfromqthread.cpp \
     runcuethread.cpp \
-    robot.cpp \
-    boardblock.cpp \
-    mythread.cpp
+    manualblockpart.cpp \
+    robot.cpp
 
 HEADERS  += mainwindow.h \
     console.h \
@@ -79,9 +77,8 @@ HEADERS  += mainwindow.h \
     motorcuemodel.h \
     threadfromqthread.h \
     runcuethread.h \
-    robot.h \
-    boardblock.h \
-    mythread.h
+    manualblockpart.h \
+    robot.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
@@ -91,12 +88,3 @@ FORMS    += mainwindow.ui \
     boardpage.ui
 
 QMAKE_CXXFLAGS +=  -Wno-unused-parameter
-
-
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/osc-cpp-qt-master/osc-cpp-qt-master/bin/release/ -losc
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/osc-cpp-qt-master/osc-cpp-qt-master/bin/debug/ -losc
-else:unix: LIBS += -L$$PWD/osc-cpp-qt-master/osc-cpp-qt-master/bin/ -losc
-
-INCLUDEPATH += $$PWD/osc-cpp-qt-master/osc-cpp-qt-master
-DEPENDPATH += $$PWD/osc-cpp-qt-master/osc-cpp-qt-master

@@ -9,18 +9,19 @@
 class CueData
 {
 public:
-    CueData(bool &used,QString &name,
+    CueData(bool &used,int &number,QString &name,
             int &delay,int &dmx,
-            int &conti);
+            bool &conti);
     CueData();
 public:
-
+    void set_cueNumber(int num);
     void set_cueUsed(bool used);
     void set_cueName(QString name);
     void set_cueDelay(int delay);
     void set_cueDmxChannel(int ch);
-    void set_cueContinue(int conti);
+    void set_cueContinue(bool conti);
 
+    int get_cueNumber();
     bool get_cueUsed();
     QString get_cueName();
     int get_cueDelay();
@@ -30,11 +31,12 @@ public:
     MotorCue *MCue[8];
 
 public:
+    int _cueNumber = 0;
     bool _cueUsed = true;
     QString _cueName = "cue";
     int _cueDelay = 0;
     int _dmx = 0;
-    int _cueContinue = 0;
+    bool _cueContinue = true;
 
 };
 

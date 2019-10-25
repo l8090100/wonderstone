@@ -5,8 +5,8 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include "cuedata.h"
-#include "boardblock.h"
-#include "ui_showpage.h"
+#include "manualblockpart.h"
+
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -27,6 +27,7 @@ class MotorBlock : public QGroupBox
 
 public:
     MotorBlock(QWidget *parent = 0);
+    ManualBlock *manual_b;
 
     void setID(int id);
     void setUsed(bool used);
@@ -90,15 +91,11 @@ public:
 signals:
    // void valueChanged(int value);
     void MotorBlock_Mouse_Pressed(int,MotorCue*);
-    void write_motor(const QByteArray &data);
 
 public slots:
    // void setValue(int value);
     void setMode();
     void toggleButton_SetUsed();
-    void JGF();
-    void JG0();
-    void JGR();
 
 
 private:
@@ -145,9 +142,7 @@ private:
 
 private:
     QVector<CueData> *cue[100];
-    BlockMotor *board_motor;
-public:
-    BlockMotor *get_board_motor(){return board_motor;}
+
 
 };
 //! [0]

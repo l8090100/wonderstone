@@ -12,12 +12,15 @@
 
 SystemSettingModel *SystemPage::system_table_model = new SystemSettingModel();
 ModeSettingModel *SystemPage::mode_table_model = new ModeSettingModel();
+QSerialPort *SystemPage::serial = new QSerialPort();
+QByteArray *SystemPage::response_data_temp = new QByteArray();
+int SystemPage::write_all_motor = 0;
 SystemPage::SystemPage(QWidget *parent): QWidget(parent),  ui(new Ui::SystemPage)
 {
     ui->setupUi(this);
     console = new Console;
     console->setEnabled(false);
-    serial = new QSerialPort(this);
+//    serial = new QSerialPort(this);
     settings = new SettingsDialog;
     status = new QLabel;
     ui->System_Console_VLayout->addWidget(console);
@@ -29,9 +32,6 @@ SystemPage::SystemPage(QWidget *parent): QWidget(parent),  ui(new Ui::SystemPage
 //! [2]
     connect(console, &Console::getData, this, &SystemPage::writeData);
 
-
-
-   connOpen();
 
 //   system_sql_Model = new QSqlTableModel(this);
 //   system_sql_Model->setTable("systemSetting");
@@ -52,6 +52,7 @@ SystemPage::SystemPage(QWidget *parent): QWidget(parent),  ui(new Ui::SystemPage
    system_sql_Model = new QSqlTableModel(this);
    system_sql_Model->setTable("systemSetting");
    system_sql_Model->select();
+   system_sql_Model->setEditStrategy(QSqlTableModel::OnManualSubmit);   //设置保存策略为手动提交
    get_system_model()->creatTableModel(system_sql_Model->rowCount());
    for(int r=0;r<system_sql_Model->rowCount();r++){
        for(int c=0;c<system_sql_Model->columnCount();c++){
@@ -68,6 +69,7 @@ SystemPage::SystemPage(QWidget *parent): QWidget(parent),  ui(new Ui::SystemPage
     mode_sql_Model = new QSqlTableModel(this);
     mode_sql_Model->setTable("modeSetting");
     mode_sql_Model->select();
+    mode_sql_Model->setEditStrategy(QSqlTableModel::OnManualSubmit);   //设置保存策略为手动提交
     get_mode_model()->creatTableModel(mode_sql_Model->rowCount());
     for(int r=0;r<mode_sql_Model->rowCount();r++){
         for(int c=0;c<mode_sql_Model->columnCount();c++){
@@ -124,17 +126,37 @@ void SystemPage::closeSerialPort()
 }
 
 //! [6]
-void SystemPage::writeData(const QByteArray &data)
+void SystemPage::writeData(const QByteArray &data,int motor)
 {
     serial->write(data);
+    write_all_motor = motor;
+//    qDebug()<< write_all_motor;
 }
-//! [6]
 
 //! [7]
 void SystemPage::readData()
 {
     QByteArray data = serial->readAll();
+
     console->putData(data);
+
+    static QByteArray byteArray;
+        byteArray = byteArray+data;
+
+        //we want to read all message not only chunks
+        if(!QString(byteArray).contains("\n"))
+            return;
+
+        //sanitize data
+        QString data2 = QString( byteArray ).remove("\r").remove("\n");
+        byteArray.clear();
+
+        // Print data
+//        qDebug() << "RECV: " << data2;
+//    if(write_all_motor >0){
+         emit sendData(data2,write_all_motor);
+//    }
+//    qDebug()<<"readData: "<< data;
 }
 //! [7]
 

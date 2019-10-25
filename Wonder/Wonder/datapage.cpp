@@ -1,6 +1,5 @@
 #include "datapage.h"
 #include "ui_datapage.h"
-#include "showpage.h"
 #include "ui_showpage.h"
 #include <QtSql>
 #include <QSqlTableModel>
@@ -51,7 +50,7 @@ DataPage::DataPage(QWidget *parent): QWidget(parent),  ui(new Ui::DataPage)
 
             if (col == 1){
                 for(int m=0;m<8;m++){
-                    if(data.split(",").at(m)=="1"){booling = true;}else{booling = false;}
+                    if(data.split(",").at(m)==1){booling = true;}else{booling = false;}
                     ShowPage::get_m_model()->CueList.at(row)->MCue[m]->set_used(booling);
                 }
             }
@@ -85,7 +84,6 @@ DataPage::DataPage(QWidget *parent): QWidget(parent),  ui(new Ui::DataPage)
                 }
             }
             else if(col == 7){
-
                 for(int m=0;m<8;m++){
                     int value = data.split(",").at(m).toInt();
                     ShowPage::get_m_model()->CueList.at(row)->MCue[m]->set_cont(value);
@@ -122,9 +120,9 @@ DataPage::DataPage(QWidget *parent): QWidget(parent),  ui(new Ui::DataPage)
 
 
 
-//    ui->Data_CueData_tableView->verticalHeader()->setVisible(false);
-//    ui->Data_CueData_tableView->horizontalHeader()->setStretchLastSection(true);
-//    ui->Data_CueData_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->Data_CueData_tableView->verticalHeader()->setVisible(false);
+    ui->Data_CueData_tableView->horizontalHeader()->setStretchLastSection(true);
+    ui->Data_CueData_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     //cueListTable
     ui->Data_CueList_tableView->setModel(get_cueList_model());
@@ -263,11 +261,13 @@ void DataPage::save_motorCue_to_project()
     }
 
     motorCue_sql_Model->submitAll();
-
+ //   sql_model->database().transaction();
     if(motorCue_sql_Model->submitAll()){
 //        sql_model->database().commit();
+        qDebug()<<"artnet_sql_Model ok~";
     }else{
         motorCue_sql_Model->database().rollback();
+        qDebug()<<"save error~";
     }
 
 }

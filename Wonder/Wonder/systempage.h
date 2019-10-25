@@ -45,32 +45,36 @@ public:
 
     static SystemSettingModel *get_system_model(){return system_table_model;}
     static ModeSettingModel *get_mode_model(){return mode_table_model;}
-private slots:
+public slots:
     void openSerialPort();
     void closeSerialPort();
     void about();
-    void writeData(const QByteArray &data);
+    void writeData(const QByteArray &data,int motor);
     void readData();
     void handleError(QSerialPort::SerialPortError error);
     void on_System_OpenSerial_button_clicked();
     void on_System_CloseSerial_button_clicked();
     void on_System_SettingDialog_button_clicked();
     void on_System_ClearConsole_button_clicked();
-
+signals:
+    void sendData(const QString data,int motor);
 private:
     void fillPortsParameters();
     void fillPortsInfo();
     void updateSettings();
 
-private:
+public:
     Ui::SystemPage *ui;
     SettingsDialog *settings;
-    QSerialPort *serial;
+    static QSerialPort *serial;
     Console *console;
     QLabel *status;
     QSqlTableModel *modeSetting_Model;
     QSqlTableModel *systemSetting_Model;
     void showStatusMessage(const QString &message);
+
+    static QByteArray *response_data_temp;
+    static int write_all_motor;
 
 };
 

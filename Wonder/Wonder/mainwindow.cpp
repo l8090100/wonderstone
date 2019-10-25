@@ -14,11 +14,9 @@ SystemPage *MainWindow::systemPage;
 ShowPage *MainWindow::showPage;
 BoardPage *MainWindow::boardPage;
 DataPage *MainWindow::dataPage;
-MotorBlock *MainWindow::motorBlock;
 QSerialPort *MainWindow::m_serial;
 bool MainWindow::motor_Read_Temp[8] = {false,false,false,false,false,false,false,false};
 int MainWindow::motor_counter = 0;
-QString MainWindow::temp_Data[8] = {"dis","dis","dis","dis","dis","dis","dis","dis"};
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),ui(new Ui::MainWindow)
 {
     connOpen();
@@ -28,9 +26,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),ui(new Ui::MainWin
     showPage = new ShowPage();
     boardPage = new BoardPage();
     dataPage = new DataPage();
-    motorBlock = new MotorBlock();
 
-    m_serial = new QSerialPort();//unused
+    m_serial = new QSerialPort();
 
     ui->Main_stackedWidget->addWidget(showPage);
     ui->Main_stackedWidget->addWidget(boardPage);
@@ -41,15 +38,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),ui(new Ui::MainWin
     connect(dataPage->get_cueList_Table(), SIGNAL(clicked(const QModelIndex &)), showPage, SLOT(showMotorData2(const QModelIndex &)));
     connect(&m_heart,&QTimer::timeout,this,&MainWindow::heartTimeOut);
     connect(showPage,&ShowPage::write_all_motors_max,systemPage,&SystemPage::writeData);//write data成功
-    connect(showPage,&ShowPage::write_all_motors,systemPage,&SystemPage::writeData);//write data成功
-    connect(systemPage,&SystemPage::send_to_showPage,this,&MainWindow::show_motor_situation);//write data成功
-    connect(showPage,&ShowPage::generateCueBlock,boardPage,&BoardPage::generateCueBlock);
-    connect(showPage->mb->at(0),&MotorBlock::write_motor,systemPage,&SystemPage::writeData);
-    connect(showPage->mb->at(1),&MotorBlock::write_motor,systemPage,&SystemPage::writeData);
-    connect(showPage->mb->at(2),&MotorBlock::write_motor,systemPage,&SystemPage::writeData);
-    connect(showPage->mb->at(3),&MotorBlock::write_motor,systemPage,&SystemPage::writeData);
-
-    m_heart.setInterval(1000);
+        connect(showPage,&ShowPage::write_all_motors,systemPage,&SystemPage::writeData);//write data成功
+    connect(systemPage,&SystemPage::sendData,this,&MainWindow::show_motor_situation);//write data成功
+    m_heart.setInterval(100);
     //全局线程的创建
 //    m_thread = new ThreadFromQThread(this);
 //    connect(m_thread,&ThreadFromQThread::message  ,this,&MainWindow::receiveMessage);
@@ -67,29 +58,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::show_motor_situation(QByteArray data)
+void MainWindow::show_motor_situation(const QString& string,int motor)
 {
-    data = data.split('#').at(0);
-//    qDebug() <<data;
-    if(data.split(',').at(0)=="PC"){
-        for(int m=1;m<=4;m++){   
-            QByteArray data_final = data.split(',').at(m);
-            QString s_data = QString(data_final.split('.').at(0));
-            long pos = s_data.toLong();
-            int now_Pos = pos/10000;//位置除10000倍
-            showPage->mb->at(m-1)->setNowPosition(now_Pos);
-        }
-
-    }else if(data.split(',').at(0)=="ST"){
-        for(int m=1;m<=4;m++){
-            if(data.split(',').at(m)=="0"){
-                showPage->mb->at(m-1)->setSituation("STOP");
-            }else if(data.split(',').at(m)=="4"){
-                showPage->mb->at(m-1)->setSituation("RUN");
-            }
-        }
+ //   qDebug() << string<< "motor: "<< motor;
+//        showPage->mb->at(motor_counter)->setSituation(string);
+        motor_counter++;
+    if(motor_counter==motor){
+        motor_counter = 0;
     }
-//  showPage->mb->at(motor)->setSituation(string);
 }
 
 void MainWindow::on_Show_Button_clicked()
@@ -111,6 +87,18 @@ void MainWindow::on_System_Button_clicked()
 {
    ui->Main_stackedWidget->setCurrentIndex(3);
 }
+
+
+void MainWindow::on_Show_AllMin_Button_clicked()
+{
+    m_serial->write("T1JGF\n");m_serial->write("T3JGF\n");
+}
+
+void MainWindow::on_Show_AllHome_Button_clicked()
+{
+    m_serial->write("T1JG0\n");m_serial->write("T3JG0\n");
+}
+
 
 
 void MainWindow::on_actionOpen_Project_triggered()
@@ -143,7 +131,6 @@ void MainWindow::heartTimeOut()
         s_heartCount = 0;
     }
 //    showPage->mb->at(0)->setContinue(s_heartCount);
-//    systemPage->readData();
 //    ui->progressBar_heart->setValue(s_heartCount);
 }
 

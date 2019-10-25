@@ -19,11 +19,17 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <layout class="QGridLayout" name="Board_gridLayout"/>
-   </item>
-  </layout>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>1251</width>
+     <height>631</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="Board_verticalLayout"/>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1309</width>
+    <width>1280</width>
     <height>660</height>
    </rect>
   </property>
@@ -23,11 +23,11 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_14">
      <item>
-      <widget class="QPushButton" name="Show_Connect_Button">
+      <widget class="QPushButton" name="pushButton_30">
        <property name="minimumSize">
         <size>
-         <width>300</width>
-         <height>50</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -37,18 +37,129 @@
         </size>
        </property>
        <property name="text">
-        <string>connect </string>
+        <string>PushButton</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Show_Disconnect_Button">
+      <widget class="QPushButton" name="pushButton_31">
        <property name="minimumSize">
         <size>
-         <width>300</width>
-         <height>50</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_16">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_15">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_14">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_13">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_32">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -56,7 +167,33 @@
         </size>
        </property>
        <property name="text">
-        <string>disconnect</string>
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_33">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_34">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>PushButton</string>
        </property>
       </widget>
      </item>
@@ -310,20 +447,27 @@
            </property>
            <item>
             <widget class="QLabel" name="label">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="maximumSize">
               <size>
                <width>100</width>
-               <height>30</height>
+               <height>100</height>
               </size>
              </property>
              <property name="text">
               <string>DATA</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_17">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
@@ -333,12 +477,6 @@
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
             <widget class="QPushButton" name="Show_SetDes_Button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -358,15 +496,9 @@
            </item>
            <item>
             <widget class="QSlider" name="Show_SetDes_Slider">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>0</width>
                <height>0</height>
               </size>
              </property>
@@ -383,22 +515,10 @@
            </item>
            <item>
             <widget class="QSpinBox" name="Show_SetDes_spinBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="alignment">
@@ -415,12 +535,6 @@
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
             <widget class="QLabel" name="label_20">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="text">
               <string>SPEED</string>
              </property>
@@ -428,12 +542,6 @@
            </item>
            <item>
             <widget class="QSlider" name="Show_SpeedInput_Slider">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
@@ -453,22 +561,10 @@
            </item>
            <item>
             <widget class="QSpinBox" name="Show_SpeedInput_spinBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="alignment">
@@ -485,12 +581,6 @@
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
             <widget class="QLabel" name="label_21">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="text">
               <string>ACCE</string>
              </property>
@@ -498,12 +588,6 @@
            </item>
            <item>
             <widget class="QSlider" name="Show_AcceInput_Slider">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
@@ -523,22 +607,10 @@
            </item>
            <item>
             <widget class="QSpinBox" name="Show_AcceInput_spinBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="alignment">
@@ -561,16 +633,10 @@
          <item>
           <widget class="QPushButton" name="Show_AdvancedSetting_Button">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>50</height>
-            </size>
            </property>
            <property name="text">
             <string>set des all</string>
@@ -579,12 +645,6 @@
          </item>
          <item>
           <widget class="QLabel" name="Show_Delay_Label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
            </property>
@@ -598,18 +658,6 @@
          </item>
          <item>
           <widget class="QSpinBox" name="Show_DelayInput_spinBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
@@ -620,12 +668,6 @@
          </item>
          <item>
           <widget class="QLabel" name="Show_Continue_Label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
            </property>
@@ -639,18 +681,6 @@
          </item>
          <item>
           <widget class="QSpinBox" name="Show_ContiInput_spinBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
@@ -667,23 +697,8 @@
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="0" column="0" colspan="2">
             <widget class="QLabel" name="label_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>30</height>
-              </size>
-             </property>
              <property name="text">
               <string>SETTING</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -815,12 +830,6 @@
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">
               <widget class="QPushButton" name="Show_ReverseSingle_Togglebutton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -837,12 +846,6 @@
              </item>
              <item row="0" column="1">
               <widget class="QPushButton" name="Show_SetPositionTo0_button">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -856,12 +859,6 @@
              </item>
              <item row="1" column="0" colspan="2">
               <widget class="QPushButton" name="Show_HomeSingle_button">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -917,22 +914,10 @@
          </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="Show_ResetSingle_button">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>0</width>
              <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>100</height>
             </size>
            </property>
            <property name="text">
@@ -942,22 +927,10 @@
          </item>
          <item row="1" column="0" colspan="2">
           <widget class="QPushButton" name="Show_SaveToCue_button">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="minimumSize">
             <size>
-             <width>200</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="sizeIncrement">
-            <size>
-             <width>200</width>
-             <height>100</height>
+             <width>0</width>
+             <height>0</height>
             </size>
            </property>
            <property name="text">
@@ -967,22 +940,10 @@
          </item>
          <item row="0" column="0">
           <widget class="QPushButton" name="Show_PreviewSingle_button">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
              <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>100</height>
             </size>
            </property>
            <property name="text">

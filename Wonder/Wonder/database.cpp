@@ -23,12 +23,8 @@ bool DataBase::connOpen()
         QSqlDatabase::database().close();
     }
     my_db=QSqlDatabase::addDatabase("QSQLITE");
-//    my_db.setDatabaseName("D:/Users/l8090100/Documents/test.db");
-    QString path = QCoreApplication::applicationDirPath();
-    qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath();
-    path = path + ("/database/test.db");
-    qDebug() << path;
-    my_db.setDatabaseName(path);
+    my_db.setDatabaseName("D:/Users/l8090100/Documents/test.db");
+
     if(!my_db.open())
     {
         qDebug() << "faild open!!";

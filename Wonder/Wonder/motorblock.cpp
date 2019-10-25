@@ -9,6 +9,8 @@
 MotorBlock::MotorBlock( QWidget *parent)
     : QGroupBox(parent)
 {
+    manual_b = new ManualBlock;
+
     Tab_B =  new QPushButton();
     Tab_B->setText("T_Motor");
     Mode_B = new QPushButton();
@@ -40,7 +42,7 @@ MotorBlock::MotorBlock( QWidget *parent)
     Continue_L = new QLabel("CON");
     Situation_L = new QLabel("SIT");
 
-    QBoxLayout *blockLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    blockLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
     blockLayout->addWidget(Mode_B);
     blockLayout->addWidget(Used_B);
@@ -317,10 +319,8 @@ void MotorBlock::mousePressEvent(QMouseEvent *ev)
 {
     QString text = Name_L->text();
     ShowPage::selectIndexName = text;
-
 //    qDebug() << text;
-    emit MotorBlock_Mouse_Pressed(this->M_id,ShowPage::get_m_model()->CueList.at(ShowPage::get_cueTableSelectRow())->MCue[this->M_id]
-                                  );
+    emit MotorBlock_Mouse_Pressed(this->M_id,ShowPage::get_m_model()->CueList.at(ShowPage::get_cueTableSelectRow())->MCue[this->M_id]);
 }
 
 void MotorBlock::setCue(){
